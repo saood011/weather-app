@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  </head>
+  <body>
+    <div class="searchDiv text-center ">
+      <form>
+        <input
+          type="text"
+          name="search"
+          placeholder="Search.."
+          id="searchInput"
+        />
+        <!-- Button trigger modal -->
+        <button
+          type="button"
+          class="btn btn-primary search-btn"
+          data-toggle="modal"
+          data-target="#exampleModalCenter"
+          id="search-btn"
+          onclick="searchRequest()"
+        >
+          Search
+        </button>
+      </form>
+    </div>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModalCenter"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content ">
+          <div class="modal-header bg-warning text-white ">
+            <h5 class="modal-title" id="exampleModalLongTitle">
+              City Name...
+            </h5>
+            <img id="modal-img" src="" alt="icon" />
+
+            <p class="modal-description">Weather Description...</p>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive-sm">
+              <table class="table-warning ">
+                <tbody>
+                  <tr>
+                    <th scope="row">Temperature:</th>
+                    <td id="modalTemp" class="text-left">Temp</td>
+                    <th>Humidity</th>
+                    <td id="modal-humidity">...</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Max_Temp:</th>
+                    <td id="modal-max-temp">...</td>
+                    <th>Country Code</th>
+                    <td id="modal-country">...</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Min_Temp:</th>
+                    <td id="modal-min-temp">...</td>
+                    <th>Date and time</th>
+                    <td id="modal-date">...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <img src="./icons/SVG/Cloud-Upload.svg" id="icon" class="flicker-in-1 " />
+
+    <div
+      class="container d-flex  flex-column align-items-center "
+      data-aos="flip-left"
+    >
+      <marquee class="top bg-white rounded  text-center" id="sum-day"
+        >Forecast for the day</marquee
+      >
+      <div
+        class="row shadow-lg p-3  rounded d-flex justify-content-center  align-items-center"
+      >
+        <div class="top  bg-white rounded text-center heartbeat" id="temp">
+          Waiting for server to respond...
+        </div>
+        <div class="top  bg-white rounded text-center" id="zone">
+          Waiting for server to respond...
+        </div>
+        <div class="top  bg-white rounded text-center" id="sum">
+          Waiting for server to respond...
+        </div>
+        <div class="top  bg-white rounded text-center" id="time">
+          Waiting for server to respond...
+        </div>
+      </div>
+    </div>
+    <!-- Handlebar template for hourly -->
+
+    <div id="hourly-content" data-aos="flip-left">Updating...</div>
+    <script id="myTemplate-hourly" type="text/x-handlebars-template">
+
+      {{#each data}}
+
+      <div id="hourly-info" class="bg-white d-flex flex-wrap "
+      >
+          <p class="hourly-span">{{time}}</p>
+          <p class="hourly-span" id="hourly-temp">{{temperature}}</p>
+          <p class="hourly-span" id="rain">{{precipProbability}}</p>
+          <p class="hourly-span"><img src= "./icons/SVG/{{icon}}.svg" alt={{icon}} id='hourly-icon'></p>
+      </div>
+      {{/each}}
+    </script>
+
+    <!-- Handlebar template for weeklyforecast-->
+    <div class="container text-center">
+      <button
+        type="button"
+        class="btn btn-info blink-2 "
+        data-toggle="collapse"
+        data-target="#demo"
+      >
+        Click here for Hourly Forecast
+      </button>
+      <div id="demo" class="collapse">
+        <div id="content"></div>
+      </div>
+    </div>
+    <!--Creating the template-->
+    <script id="myTemplate" type="text/x-handlebars-template">
+       <p class="weekly-head text-center bg-dark rounded p-2 pt-3 mt-2 text-white">Weekly weather forecast</p>
+
+      <div class="container weekly-data d-flex justify-content-center  flex-wrap shadow-lg rounded p-2">
+       {{#each data}}
+       <div class="card  bg-white m-1" style="max-width: 18rem;">
+           <div class="card-header bg-dark text-white">{{time}}</div>
+           <div class="card-body text-center">
+               <h5 class="card-title">
+                   <span id="High">{{temperatureHigh}} <small>high</small></span>
+                   <span id="Low">{{temperatureLow}} <small>low</small></span>
+               </h5>
+               <p class="card-text"><img src="./icons/SVG/{{icon}}.svg" alt={{icon}}> {{precipProbability}}</p>
+           </div>
+       </div>
+       {{/each}}
+       </div>
+    </script>
+    <div
+      class="fluid-container w-100 p-3 d-flex bg-secondary font-italic rounded text-white  small"
+      id="footer"
+    >
+      Updating..
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
+    <script src="script.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
+  </body>
+</html>
